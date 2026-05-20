@@ -1,0 +1,9 @@
+# 版本備份（只存本機，不推 GitHub）
+*-v1.html
+*-v2.html
+*-v*.html
+
+# 過程參考資料與往返修改紀錄
+_archive/
+_notes/
+_drafts/
