@@ -27,7 +27,7 @@
   --depth: 3px;
   --card-shadow: 3px 3px 0 var(--shadow);
   --input-bg: var(--bg);
-  --input-shadow: 2px 2px 0 var(--shadow);
+  --input-shadow: none;
   --input-focus-bg: #fff;
   --btn-primary-bg: var(--text-primary);
   --btn-primary-color: #fff;
@@ -204,6 +204,9 @@ body {
   font-size: 13px; font-weight: 700; font-family: 'DM Mono', monospace;
   color: var(--row-num-color); text-align: center; padding-top: 2px;
 }
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+input[type="number"] { -moz-appearance: textfield; }
 input[type="number"], input[type="text"] {
   height: 40px; border: 1px solid var(--border); border-radius: var(--radius);
   padding: 0 10px; font-size: 16px; font-family: 'DM Mono', monospace;
@@ -609,7 +612,7 @@ html[data-theme="editorial"] .modal { border-radius: 0; }
   </div>
 </div>
 
-<!-- MODAL -->
+<!-- MODAL — 匯出 -->
 <div class="modal-overlay" id="modal">
   <div class="modal">
     <h3>確認檔名</h3>
@@ -619,6 +622,15 @@ html[data-theme="editorial"] .modal { border-radius: 0; }
       <button class="btn btn-secondary" onclick="closeModal()">取消</button>
       <button class="btn btn-primary" onclick="confirmExport()">下載</button>
     </div>
+  </div>
+</div>
+
+<!-- MODAL — 提醒 -->
+<div class="modal-overlay" id="modal-notice">
+  <div class="modal">
+    <h3>提醒</h3>
+    <p id="notice-msg"></p>
+    <div class="modal-btns" id="notice-btns"></div>
   </div>
 </div>
 
@@ -724,7 +736,7 @@ function resetAll() {
 function calculateAll() {
   saveSettingsFromForm();
   if (cfg.threshold1 >= cfg.threshold2) {
-    alert('設定錯誤：無事上限（' + cfg.threshold1 + '%）必須小於健康上限（' + cfg.threshold2 + '%），請至設定頁修正。');
+    showAlert('設定錯誤：無事上限（' + cfg.threshold1 + '%）必須小於健康上限（' + cfg.threshold2 + '%），請至設定頁修正。');
     return;
   }
   var resultsWrap = document.getElementById('results-wrap');
@@ -774,7 +786,7 @@ function calculateAll() {
     resultsWrap.appendChild(div);
   });
 
-  if (!hasResult) alert('請至少填入一筆有效的昨收與今開價格。');
+  if (!hasResult) showAlert('請至少填入一筆有效的昨收與今開價格。');
 }
 
 function updateRangeLabels() {
@@ -818,9 +830,10 @@ function saveSettingsFromForm() {
 }
 
 function resetSettings() {
-  if (!confirm('確定要恢復所有預設值嗎？')) return;
-  cfg = JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
-  loadSettingsToForm();
+  showConfirm('確定要恢復所有預設值嗎？', function() {
+    cfg = JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
+    loadSettingsToForm();
+  });
 }
 
 function exportHTML() {
@@ -837,9 +850,44 @@ function closeModal() {
   document.getElementById('modal').classList.remove('show');
 }
 
+function closeNotice() {
+  document.getElementById('modal-notice').classList.remove('show');
+}
+
+function showAlert(msg) {
+  document.getElementById('notice-msg').textContent = msg;
+  var btns = document.getElementById('notice-btns');
+  btns.innerHTML = '';
+  var ok = document.createElement('button');
+  ok.className = 'btn btn-primary'; ok.textContent = '確認';
+  ok.onclick = closeNotice;
+  btns.appendChild(ok);
+  document.getElementById('modal-notice').classList.add('show');
+}
+
+function showConfirm(msg, onConfirm) {
+  document.getElementById('notice-msg').textContent = msg;
+  var btns = document.getElementById('notice-btns');
+  btns.innerHTML = '';
+  var cancel = document.createElement('button');
+  cancel.className = 'btn btn-secondary'; cancel.textContent = '取消';
+  cancel.onclick = closeNotice;
+  var ok = document.createElement('button');
+  ok.className = 'btn btn-primary'; ok.textContent = '確認';
+  ok.onclick = function() { closeNotice(); onConfirm(); };
+  btns.appendChild(cancel);
+  btns.appendChild(ok);
+  document.getElementById('modal-notice').classList.add('show');
+}
+
 function confirmExport() {
   var filename = document.getElementById('modal-filename').value.trim();
-  if (!filename) { alert('請輸入檔名'); return; }
+  if (!filename) {
+    var fi = document.getElementById('modal-filename');
+    fi.style.borderColor = '#c0392b'; fi.focus();
+    return;
+  }
+  document.getElementById('modal-filename').style.borderColor = '';
   if (!filename.endsWith('.html')) filename += '.html';
 
   closeModal();
@@ -865,13 +913,13 @@ function importHTML(event) {
   reader.onload = function(e) {
     var content = e.target.result;
     var match = content.match(/const EMBEDDED_SETTINGS = (.+?); \/\/ EMBEDDED_SETTINGS_PLACEHOLDER/);
-    if (!match) { alert('找不到設定資料，請確認是否為正確的匯出檔案。'); return; }
+    if (!match) { showAlert('找不到設定資料，請確認是否為正確的匯出檔案。'); return; }
     try {
       cfg = JSON.parse(match[1]);
       loadSettingsToForm();
-      alert('設定已成功匯入！');
+      showAlert('設定已成功匯入！');
     } catch(err) {
-      alert('設定檔格式錯誤，無法匯入。');
+      showAlert('設定檔格式錯誤，無法匯入。');
     }
   };
   reader.readAsText(file);
@@ -880,7 +928,10 @@ function importHTML(event) {
 
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Enter') {
-    if (document.getElementById('modal').classList.contains('show')) {
+    if (document.getElementById('modal-notice').classList.contains('show')) {
+      var ok = document.querySelector('#notice-btns .btn-primary');
+      if (ok) ok.click();
+    } else if (document.getElementById('modal').classList.contains('show')) {
       confirmExport();
     } else if (document.getElementById('page-calc').classList.contains('active')) {
       calculateAll();
