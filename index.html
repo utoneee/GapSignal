@@ -14,19 +14,19 @@
 
 /* ── Integrated (default) ── */
 :root, html[data-theme="integrated"] {
-  --bg: #E9E6DF;
-  --surface: #FFFFFF;
-  --border: #D0CCC4;
+  --bg: #EDEDEC;
+  --surface: #F8F7F5;
+  --border: #C2BEB8;
   --shadow: #B8B4AC;
   --text-primary: #1A1917;
   --text-secondary: #6B6860;
-  --text-muted: #A09D98;
+  --text-muted: #8A8780;
   --accent: #1A1917;
   --radius: 10px;
   --radius-lg: 14px;
   --depth: 3px;
   --card-shadow: 3px 3px 0 var(--shadow);
-  --input-bg: var(--bg);
+  --input-bg: var(--surface);
   --input-shadow: none;
   --input-focus-bg: #fff;
   --btn-primary-bg: var(--text-primary);
@@ -316,6 +316,12 @@ html[data-theme="dark"] .t-red   { background:#28191A; border-color:#542828; col
 html[data-theme="dark"] .t-red   .result-badge { background:transparent; border-color:#A04040; color:#E08080; }
 html[data-theme="dark"] .t-red   .result-note  { border-color:#542828; }
 
+/* Dark — 設定頁按鈕 */
+html[data-theme="dark"] .btn-secondary { border-color: #5A564F; color: var(--text-secondary); }
+html[data-theme="dark"] .btn-secondary:hover { background: #2F2D29; color: var(--text-primary); }
+html[data-theme="dark"] .btn-reset { color: #E08080; border-color: #6B3535; }
+html[data-theme="dark"] .btn-reset:hover { background: #28191A; color: #E08080; }
+
 /* ── SETTINGS ── */
 .settings-section { margin-bottom: 1.5rem; }
 .settings-section h2 {
@@ -345,6 +351,7 @@ html[data-theme="dark"] .t-red   .result-note  { border-color:#542828; }
 .btn-reset { color: #7F1D1D; border-color:#EFAAAA; }
 .btn-reset:hover { background: #FDECEA; }
 .hint { font-size: 12px; color: var(--text-muted); margin-top: 4px; line-height: 1.6; }
+.credit { font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 1.5rem; letter-spacing: 0.08em; }
 .range-label {
   font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
   color: var(--text-secondary); background: var(--bg);
@@ -400,6 +407,35 @@ html[data-theme="drawdraw"] .tab-btn { color: rgba(255,255,255,0.5); }
 html[data-theme="drawdraw"] .range-label { background: var(--surface); color: var(--text-primary); border-color: var(--border); }
 
 /* ══════════════════════════════════════
+   INTEGRATED — flat / border layout
+══════════════════════════════════════ */
+html[data-theme="integrated"] #page-calc .card {
+  background: transparent; border: none; border-radius: 0;
+  box-shadow: none; padding: 0;
+  border-top: 1px solid var(--border);
+}
+html[data-theme="integrated"] .row-headers { padding: 12px 0 8px; margin-bottom: 0; }
+html[data-theme="integrated"] .rows-wrap { margin-bottom: 8px; }
+html[data-theme="integrated"] .action-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 0; margin-top: 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+html[data-theme="integrated"] .btn-add { margin-bottom: 0; }
+html[data-theme="integrated"] .btn-row { margin-top: 0; }
+html[data-theme="integrated"] .btn { box-shadow: none; }
+html[data-theme="integrated"] .btn-primary { box-shadow: none; }
+html[data-theme="integrated"] .btn:active { transform: none; opacity: 0.85; }
+html[data-theme="integrated"] .results-wrap {
+  gap: 8px; margin-top: 1.25rem;
+}
+html[data-theme="integrated"] .result-item { border-radius: 0; box-shadow: none; }
+html[data-theme="integrated"] .t-green,
+html[data-theme="integrated"] .t-gray,
+html[data-theme="integrated"] .t-red { box-shadow: none; }
+
+/* ══════════════════════════════════════
    EDITORIAL — overrides
 ══════════════════════════════════════ */
 html[data-theme="editorial"] .nav {
@@ -422,7 +458,7 @@ html[data-theme="editorial"] .tab-btn {
 html[data-theme="editorial"] .tab-btn.active {
   color: var(--text-primary); border-bottom-color: var(--accent);
 }
-html[data-theme="editorial"] .card {
+html[data-theme="editorial"] #page-calc .card {
   background: transparent; border: none; border-radius: 0;
   box-shadow: none; padding: 0 0 0.5rem;
   border-top: 1px solid var(--border);
@@ -545,7 +581,7 @@ html[data-theme="editorial"] .modal { border-radius: 0; }
         <h2>外觀主題</h2>
         <div class="theme-picker" id="theme-picker">
           <button class="theme-option" data-theme-name="integrated" onclick="setTheme('integrated')">
-            <span class="theme-dot" style="background:#E9E6DF;"></span>清爽
+            <span class="theme-dot" style="background:#EDEDEC;"></span>清爽
           </button>
           <button class="theme-option" data-theme-name="dark" onclick="setTheme('dark')">
             <span class="theme-dot" style="background:#1C1A17;"></span>深色
@@ -608,6 +644,8 @@ html[data-theme="editorial"] .modal { border-radius: 0; }
         </div>
         <button class="btn btn-secondary btn-reset" onclick="resetSettings()">恢復預設值</button>
       </div>
+
+      <p class="credit">© 2026 UTONEEE, FENI</p>
     </div>
   </div>
 </div>
@@ -652,20 +690,19 @@ let cfg = EMBEDDED_SETTINGS
   : JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
 
 let rowCount = 0;
-let rowOrder = [];
 
 /* ── THEME ── */
 function setTheme(name) {
   document.documentElement.setAttribute('data-theme', name);
-  localStorage.setItem('gapsignal-theme', name);
+  if (!EMBEDDED_SETTINGS) localStorage.setItem('gapsignal-theme', name);
   document.querySelectorAll('.theme-option').forEach(function(btn) {
     btn.classList.toggle('active', btn.getAttribute('data-theme-name') === name);
   });
 }
 
 function loadTheme() {
-  var saved = localStorage.getItem('gapsignal-theme');
-  if (!saved) saved = document.documentElement.getAttribute('data-theme') || 'integrated';
+  var saved = document.documentElement.getAttribute('data-theme') || 'integrated';
+  if (!EMBEDDED_SETTINGS) saved = localStorage.getItem('gapsignal-theme') || saved;
   setTheme(saved);
 }
 
@@ -705,7 +742,6 @@ function refreshLabels() {
 function addRow() {
   rowCount++;
   var id = rowCount;
-  rowOrder.push(id);
   var div = document.createElement('div');
   div.className = 'row-item';
   div.id = 'row-' + id;
@@ -720,7 +756,7 @@ function addRow() {
 }
 
 function delRow(id) {
-  if (document.querySelectorAll('.row-item').length <= 1) return;
+  if (document.getElementById('rows-wrap').querySelectorAll('.row-item').length <= 1) return;
   var el = document.getElementById('row-' + id);
   if (el) el.remove();
   refreshLabels();
@@ -729,7 +765,7 @@ function delRow(id) {
 function resetAll() {
   document.getElementById('rows-wrap').innerHTML = '';
   document.getElementById('results-wrap').innerHTML = '';
-  rowCount = 0; rowOrder = [];
+  rowCount = 0;
   addRow();
 }
 
@@ -927,6 +963,11 @@ function importHTML(event) {
 }
 
 document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    if (document.getElementById('modal-notice').classList.contains('show')) closeNotice();
+    else if (document.getElementById('modal').classList.contains('show')) closeModal();
+    return;
+  }
   if (e.key === 'Enter') {
     if (document.getElementById('modal-notice').classList.contains('show')) {
       var ok = document.querySelector('#notice-btns .btn-primary');
