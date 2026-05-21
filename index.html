@@ -170,7 +170,7 @@ body {
 .tab-btn {
   padding: 6px 16px; border-radius: calc(var(--radius) - 3px); border: none;
   background: transparent; font-size: 13px; font-family: 'Noto Sans TC', sans-serif;
-  cursor: pointer; color: var(--text-secondary); transition: all 0.15s; font-weight: 500;
+  cursor: pointer; color: var(--text-secondary); transition: background 0.15s, color 0.15s, box-shadow 0.15s; font-weight: 500;
 }
 .tab-btn.active {
   background: var(--tab-active-bg); color: var(--tab-active-color);
@@ -206,17 +206,18 @@ body {
 }
 input[type="number"], input[type="text"] {
   height: 40px; border: 1px solid var(--border); border-radius: var(--radius);
-  padding: 0 10px; font-size: 14px; font-family: 'DM Mono', monospace;
+  padding: 0 10px; font-size: 16px; font-family: 'DM Mono', monospace;
   color: var(--text-primary); background: var(--input-bg); outline: none; width: 100%;
   box-shadow: var(--input-shadow);
-  transition: border-color 0.15s, background 0.15s;
+  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
 }
 input:focus { border-color: var(--text-primary); background: var(--input-focus-bg); box-shadow: none; }
-input::placeholder { color: var(--text-muted); font-size: 13px; }
+input::placeholder { color: var(--text-muted); }
 .del-btn {
   width: 32px; height: 32px; border-radius: var(--radius); border: 1px solid var(--border);
   background: var(--input-bg); cursor: pointer; color: var(--text-muted); font-size: 16px;
-  display: flex; align-items: center; justify-content: center; transition: all 0.1s;
+  display: flex; align-items: center; justify-content: center;
+  transition: border-color 0.1s, color 0.1s, background 0.1s;
   flex-shrink: 0; box-shadow: var(--input-shadow);
 }
 .del-btn:active { transform: translate(var(--depth), var(--depth)); box-shadow: none; }
@@ -263,7 +264,7 @@ input::placeholder { color: var(--text-muted); font-size: 13px; }
 }
 .result-id {
   font-size: 13px; font-weight: 700; font-family: 'DM Mono', monospace;
-  opacity: 0.55; min-width: 18px;
+  opacity: 0.55; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 .result-rate {
   font-size: 28px; font-weight: 500; font-family: 'DM Mono', monospace;
@@ -322,7 +323,7 @@ html[data-theme="dark"] .t-red   .result-note  { border-color:#542828; }
 .setting-row label { font-size: 13px; color: var(--text-secondary); padding-top: 10px; }
 .setting-row input[type="number"] { height: 40px; width: 100px; }
 .setting-row textarea {
-  width: 100%; min-height: 60px; padding: 8px 10px; font-size: 13px;
+  width: 100%; min-height: 90px; padding: 8px 10px; font-size: 14px;
   border: 1px solid var(--border); border-radius: var(--radius);
   background: var(--input-bg); color: var(--text-primary); resize: vertical; outline: none;
   line-height: 1.6; font-family: 'Noto Sans TC', sans-serif;
@@ -393,6 +394,7 @@ html[data-theme="drawdraw"] .nav { border-bottom-color: rgba(255,255,255,0.2); }
 html[data-theme="drawdraw"] .nav-title h1 { color: #B0ADA8; }
 html[data-theme="drawdraw"] .nav-subtitle { color: rgba(255,255,255,0.3); }
 html[data-theme="drawdraw"] .tab-btn { color: rgba(255,255,255,0.5); }
+html[data-theme="drawdraw"] .range-label { background: var(--surface); color: var(--text-primary); border-color: var(--border); }
 
 /* ══════════════════════════════════════
    EDITORIAL — overrides
@@ -478,7 +480,7 @@ html[data-theme="editorial"] .result-id {
   font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; opacity: 1;
 }
 html[data-theme="editorial"] .result-rate {
-  font-family: 'Noto Serif TC', serif; font-size: 36px; font-weight: 700;
+  font-family: 'Noto Serif TC', serif; font-size: 28px; font-weight: 700;
   letter-spacing: -0.02em;
 }
 html[data-theme="editorial"] .result-badge {
@@ -698,8 +700,8 @@ function addRow() {
   div.innerHTML =
     '<span class="row-num"></span>' +
     '<input type="text" placeholder="代號" id="sym-' + id + '" />' +
-    '<input type="number" placeholder="昨收" id="prev-' + id + '" step="0.01" min="0" />' +
-    '<input type="number" placeholder="今開" id="today-' + id + '" step="0.01" min="0" />' +
+    '<input type="number" inputmode="decimal" placeholder="昨收" id="prev-' + id + '" step="0.01" min="0" />' +
+    '<input type="number" inputmode="decimal" placeholder="今開" id="today-' + id + '" step="0.01" min="0" />' +
     '<button class="del-btn" onclick="delRow(' + id + ')" title="刪除">&times;</button>';
   document.getElementById('rows-wrap').appendChild(div);
   refreshLabels();
