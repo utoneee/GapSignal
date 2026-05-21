@@ -319,8 +319,8 @@ html[data-theme="dark"] .t-red   .result-note  { border-color:#542828; }
   font-size: 13px; font-weight: 700; color: var(--text-secondary);
   letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 0.75rem;
 }
-.setting-row { display: grid; grid-template-columns: 120px 1fr; gap: 10px; align-items: start; margin-bottom: 10px; }
-.setting-row label { font-size: 13px; color: var(--text-secondary); padding-top: 10px; }
+.setting-row { display: grid; grid-template-columns: 60px 1fr; gap: 10px; align-items: start; margin-bottom: 10px; }
+.setting-row label { font-size: 13px; color: var(--text-secondary); padding-top: 10px; white-space: nowrap; }
 .setting-row input[type="number"] { height: 40px; width: 100px; }
 .setting-row textarea {
   width: 100%; min-height: 90px; padding: 8px 10px; font-size: 14px;
@@ -350,13 +350,13 @@ html[data-theme="dark"] .t-red   .result-note  { border-color:#542828; }
 }
 
 /* ── THEME PICKER ── */
-.theme-picker { display: flex; gap: 8px; flex-wrap: wrap; }
+.theme-picker { display: flex; gap: 6px; flex-wrap: wrap; }
 .theme-option {
-  display: flex; align-items: center; gap: 8px;
-  padding: 8px 14px; border: 1px solid var(--border);
+  display: flex; align-items: center; gap: 6px;
+  padding: 5px 10px; border: 1px solid var(--border);
   background: var(--bg); border-radius: var(--radius);
   font-size: 13px; font-family: 'Noto Sans TC', sans-serif;
-  color: var(--text-secondary); cursor: pointer; transition: all 0.15s;
+  color: var(--text-secondary); cursor: pointer; transition: background 0.15s, color 0.15s, border-color 0.15s;
 }
 .theme-option.active {
   border-color: var(--text-primary); color: var(--text-primary); font-weight: 700;
