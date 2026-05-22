@@ -557,8 +557,8 @@ html[data-theme="editorial"] .modal { border-radius: 0; }
       <div class="row-headers">
         <span>#</span>
         <span>代號（選填）</span>
-        <span>昨日收盤</span>
-        <span>今日開盤</span>
+        <span>昨天收盤</span>
+        <span>今天開盤</span>
         <span></span>
       </div>
       <div class="rows-wrap" id="rows-wrap"></div>
@@ -676,8 +676,8 @@ html[data-theme="editorial"] .modal { border-radius: 0; }
 const DEFAULT_SETTINGS = {
   threshold1: 3,
   threshold2: 5,
-  neg:  { badge: '立刻賣掉',        text: '開盤低於昨日收盤，建議立即出場，控制風險。', note: '' },
-  low:  { badge: '無事，平安的一天', text: '開盤漲幅在正常範圍內，今日變化不大，可持股觀望。', note: '' },
+  neg:  { badge: '立刻賣掉',        text: '開盤低於昨天收盤，建議立即出場，控制風險。', note: '' },
+  low:  { badge: '無事，平安的一天', text: '開盤漲幅在正常範圍內，今天變化不大，可持股觀望。', note: '' },
   mid:  { badge: '健康可觀望',       text: '盤面偏多健康，買賣皆可，視個人策略操作。', note: '' },
   high: { badge: '高開，留意風險',   text: '高幅開盤，建議觀望半小時。若沒有跌破 3%，可考慮續抱，後續可能衝高。',
           note: '備註：若盤中漲至 6–7%，可考慮減半持股（賣一半），鎖定部分獲利。' }
